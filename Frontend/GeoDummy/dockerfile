@@ -1,25 +1,34 @@
+# ---------------------------
 # Etapa 1: Build (Node.js)
+# ---------------------------
 FROM node:20 AS build
 
+# Definir diretório de trabalho
 WORKDIR /app
 
-# Copiar ficheiros de configuração se existirem
-COPY package*.json* ./
+# Copiar ficheiros de configuração
+COPY package.json package-lock.json ./
 
-# Instalar dependências (ignora se o ficheiro não existir)
-RUN if [ -f package.json ]; then npm install; fi
+# Instalar dependências
+RUN npm ci
 
-# Copiar resto do projeto
+# Copiar todo o resto do projeto
 COPY . .
 
-# Criar build (ou diretório vazio, se ainda não houver projeto)
-RUN if [ -f package.json ]; then npm run build || mkdir -p build; else mkdir -p build; fi
+# Build do frontend com Vite
+# Esta linha vai gerar a pasta /app/build
+RUN npm run build
 
+# ---------------------------
 # Etapa 2: Servir com Nginx
+# ---------------------------
 FROM nginx:stable-alpine
+
+# Copiar build do Node.js para o Nginx
 COPY --from=build /app/build /usr/share/nginx/html
 
-# Expor a porta HTTP
+# Expor porta HTTP
 EXPOSE 80
 
+# Comando para arrancar o Nginx em foreground
 CMD ["nginx", "-g", "daemon off;"]
