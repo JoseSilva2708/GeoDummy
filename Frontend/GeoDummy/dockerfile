@@ -3,20 +3,18 @@
 # ---------------------------
 FROM node:20 AS build
 
-# Definir diretório de trabalho
 WORKDIR /app
 
-# Copiar ficheiros de configuração
+# Copiar ficheiros de dependências
 COPY package.json package-lock.json ./
 
 # Instalar dependências
 RUN npm ci
 
-# Copiar todo o resto do projeto
+# Copiar restante código
 COPY . .
 
-# Build do frontend com Vite
-# Esta linha vai gerar a pasta /app/build
+# Build do Vite (gera a pasta dist/)
 RUN npm run build
 
 # ---------------------------
@@ -24,11 +22,14 @@ RUN npm run build
 # ---------------------------
 FROM nginx:stable-alpine
 
-# Copiar build do Node.js para o Nginx
+# Copiar o nginx.conf corrigido (FUNDAMENTAL)
+COPY nginx.conf /etc/nginx/conf.d/default.conf
+
+# Copiar build gerado para a pasta HTML do Nginx
 COPY --from=build /app/dist /usr/share/nginx/html
 
 # Expor porta HTTP
 EXPOSE 80
 
-# Comando para arrancar o Nginx em foreground
+# Iniciar o nginx
 CMD ["nginx", "-g", "daemon off;"]
