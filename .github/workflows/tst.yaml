@@ -106,9 +106,8 @@ jobs:
           cd Frontend/GeoDummy
           npm ci
           npm run build
-          cd ..
-          cd ..
-          docker build -t $DOCKERHUB_USERNAME/frontend:${{ steps.version.outputs.version }} ./Frontend/GeoDummy
+          cd ../../
+          docker build --no-cache -t $DOCKERHUB_USERNAME/frontend:${{ steps.version.outputs.version }} ./Frontend/GeoDummy
           docker push $DOCKERHUB_USERNAME/frontend:${{ steps.version.outputs.version }}
           docker tag $DOCKERHUB_USERNAME/frontend:${{ steps.version.outputs.version }} $DOCKERHUB_USERNAME/frontend:latest
           docker push $DOCKERHUB_USERNAME/frontend:latest
