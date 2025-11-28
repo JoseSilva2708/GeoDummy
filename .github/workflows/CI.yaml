@@ -3,7 +3,7 @@ name: CI / Lint / Tests / Security
 on:
   push:
     branches:
-      - dev
+      - main
   pull_request:
     branches:
       - main
