@@ -95,6 +95,12 @@ jobs:
           docker tag $DOCKERHUB_USERNAME/backend:${{ steps.version.outputs.version }} $DOCKERHUB_USERNAME/backend:latest
           docker push $DOCKERHUB_USERNAME/backend:latest
 
+      - name: Build frontend
+        run: |
+          cd Frontend/GeoDummy
+          npm ci
+          npm run build
+
       - name: Build and Push Frontend Image
         run: |
           docker build -t $DOCKERHUB_USERNAME/frontend:${{ steps.version.outputs.version }} ./Frontend/GeoDummy
